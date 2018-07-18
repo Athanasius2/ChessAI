@@ -9,12 +9,19 @@
     <script src="src/interface.js"></script>
 </head>
 <body>
-    <img id="spritesheet" src="res/Chess_Pieces_Sprite.png" style="display: none;">
-    <canvas id="board" width="512" height="512" style="border:1px solid #d3d3d3;"></canvas>
+    <canvas id="boardCanvas" width="512" height="512" style="border:1px solid #d3d3d3;"></canvas>
 
     <script>
-        var board = new Board("board");
-        board.draw();
+        window.onload = function(){
+            var spritesheet = new Image();
+            spritesheet.src = "res/Chess_Pieces_Sprite.png"
+
+            spritesheet.onload = function(){
+                var res = new Resources(spritesheet);
+                var board = new Board("boardCanvas", res);
+                board.draw();
+            };
+        };
     </script>
 </body>
 </html>

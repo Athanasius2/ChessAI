@@ -1,3 +1,10 @@
+/*
+Some major issues that still need to be fixed:
+I'm managing my components in a really terrible way, making the board do all the work.
+there should probably be some sort of Game class to take care of these things...
+
+*/
+
 const Pieces = 
 {
     KING : 0,
@@ -18,21 +25,17 @@ const Sides =
 
 class Resources
 {
-    constructor()
+    constructor(image)
     {    
         //maybe it would be better if we found a way to load this with javascript in the future
-        var img = document.getElementById('spritesheet');
-        var srcCanvas = document.createElement('canvas');
-
-        srcCanvas.width = 2000;
-        srcCanvas.height = 667;
-
+        var img = image;
+        
         this.gameImages = [];
 
-        // iterate through each chunk of the source image and give it its own canvas.
-        //we start with the white pieces...
         for (var i = 0; i <=5; i++)
         {
+            // iterate through each chunk of the source image and give it its own canvas.
+            //we start with the white pieces...
             this.gameImages.push(document.createElement('canvas'));
             var context = this.gameImages[i].getContext("2d");
             context.drawImage(img, i*333, 0, 333, 333, 0, 0, 64, 64);
@@ -42,27 +45,25 @@ class Resources
         for (var i = 0; i <=5; i++)
         {
             this.gameImages.push(document.createElement('canvas'));
-            var context = this.gameImages[i].getContext("2d");
+            var context = this.gameImages[i+6].getContext("2d");
             context.drawImage(img, i*333, 333, 333, 333, 0, 0, 64, 64);
         }
-    }
-    
-    
+    } 
 }
 
 class Board
 {
-    constructor(board)
+    constructor(boardCanvas, resource)
     {
-        this.res = new Resources();
-        this.board = document.getElementById(board);
-        this.ctx = this.board.getContext("2d");
+        this.res = resource;
+        this.boardCanvas = document.getElementById(boardCanvas);
+        this.ctx = this.boardCanvas.getContext("2d");
         this.state = [];
         for(var i = 0; i < 8; i++)
         {
             for(var j = 0; j < 8; j++)
             {
-                this.state.push(new Space(i, j, new Piece(Pieces.EMPTY, Sides.EMPTY)));
+                this.state.push(new Space(j, i, new Piece(Pieces.EMPTY, Sides.EMPTY)));
             }
         }
         this.state[0].piece = new Piece(Pieces.ROOK, Sides.BLACK);
@@ -126,10 +127,9 @@ class Board
             var x = this.state[i];
             if (x.piece.img > -1) {
                 this.ctx.drawImage(this.res.gameImages[x.piece.img], x.x * 64, x.y *64);
-                
             }
-        }
 
+        }
     }
 
     isValidMove()
