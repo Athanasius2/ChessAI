@@ -412,17 +412,17 @@ class Board
             break;
 
             //TODO: implement En Passant
-            //TODO: implement first move double move
             case Pieces.PAWN:
             var adj;
             if (spc.piece.side == Sides.WHITE)
             {
-                adj = this.getAdjacent(spc, Directions.NORTH); //first space
-                if (adj.piece.side != spc.piece.side)
+                adj = this.getAdjacent(spc, Directions.NORTH);
+                if (adj != null && adj.piece.side == Sides.EMPTY)
                 {
                     moves.push(adj);
                     adj = this.getAdjacent(adj, Directions.NORTH);
-                    if (adj.piece.side != spc.piece.side)
+                    //Detects if this is pawns first move.  If so, allow double move
+                    if (adj != null && adj.piece.side == Sides.EMPTY && spc.y == 6)
                         moves.push(adj);
                 }
                 adj = this.getAdjacent(spc, Directions.NORTHWEST);
@@ -441,11 +441,11 @@ class Board
             if (spc.piece.side == Sides.BLACK)
             {
                 adj = this.getAdjacent(spc, Directions.SOUTH); //first space
-                if (adj.piece.side != spc.piece.side)
+                if (adj != null && adj.piece.side == Sides.EMPTY)
                 {
                     moves.push(adj);
                     adj = this.getAdjacent(adj, Directions.SOUTH);
-                    if (adj.piece.side != spc.piece.side)
+                    if (adj != null && adj.piece.side == Sides.EMPTY && spc.y == 1)
                         moves.push(adj);
                 }
                 adj = this.getAdjacent(spc, Directions.SOUTHWEST);
@@ -468,7 +468,14 @@ class Board
         }
     }
 
-    
+    movePiece(src, dst)
+    {
+        if (src.piece.side != Sides.EMPTY)
+        {
+            dst.piece = src.piece;
+            src.piece = new Piece(Pieces.EMPTY, Sides.EMPTY);
+        }
+    }
 
     isValidMove()
     {
